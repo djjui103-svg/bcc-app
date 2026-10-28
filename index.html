@@ -1,0 +1,1065 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>ระบบบันทึกไมล์และน้ำมันขนส่ง BCC</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --navy-dark: #1b355a;
+      --navy-btn: #1d3557;
+      --orange: #d97724;
+      --green: #2d7a4c;
+      --text-main: #1f2937;
+      --bg-card: #ffffff;
+      --border-input: #1b355a;
+      --warning-bg: #fdf5e7;
+      --warning-text: #a16207;
+    }
+
+    * {
+      box-sizing: border-box;
+      font-family: 'Sarabun', sans-serif;
+      margin: 0;
+      padding: 0;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    body {
+      background: linear-gradient(180deg, #1b355a 0%, #35537d 28%, #f0cfaa 72%, #f5b27b 100%);
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+    }
+
+    .app-container {
+      width: 100%;
+      max-width: 430px;
+      padding: 24px 18px 36px;
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+    }
+
+    .screen {
+      display: none;
+      flex-direction: column;
+      flex-grow: 1;
+    }
+
+    .screen.active {
+      display: flex;
+    }
+
+    /* ---------------- หน้า 1: เลือกรถของคุณ ---------------- */
+    #screen-select-truck {
+      text-align: center;
+    }
+
+    .select-truck-title {
+      color: #ffffff;
+      font-size: 28px;
+      font-weight: 800;
+      margin-bottom: 4px;
+    }
+
+    .select-truck-sub {
+      color: rgba(255, 255, 255, 0.9);
+      font-size: 17px;
+      font-weight: 600;
+      margin-bottom: 24px;
+    }
+
+    .truck-card-list {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .truck-card {
+      background: #ffffff;
+      border-radius: 18px;
+      padding: 18px 24px;
+      text-align: left;
+      cursor: pointer;
+      box-shadow: 0 6px 18px rgba(0, 0, 0, 0.12);
+      border: 2px solid transparent;
+      transition: transform 0.1s ease;
+    }
+
+    .truck-card:active {
+      transform: scale(0.98);
+      border-color: var(--navy-dark);
+    }
+
+    .truck-plate {
+      font-size: 28px;
+      font-weight: 800;
+      color: var(--navy-dark);
+      line-height: 1.15;
+    }
+
+    .truck-driver {
+      font-size: 17px;
+      font-weight: 600;
+      color: #4b5563;
+      margin-top: 4px;
+    }
+
+    .brand-section {
+      margin: 30px auto 20px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .truck-icon-box {
+      width: 110px;
+      height: 110px;
+      border-radius: 50%;
+      background: #ffffff;
+      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 12px;
+    }
+
+    .truck-icon-svg {
+      width: 100%;
+      height: 100%;
+    }
+
+    .bcc-brand-name {
+      color: #e11d2a;
+      font-size: 26px;
+      font-weight: 900;
+      letter-spacing: 3px;
+      margin-top: 10px;
+    }
+
+    .footer-help {
+      color: #5a432d;
+      font-size: 14.5px;
+      font-weight: 600;
+      margin-top: auto;
+    }
+
+    /* ---------------- ส่วนหัวของหน้าบันทึก ---------------- */
+    .top-sub-bar {
+      color: rgba(255, 255, 255, 0.9);
+      font-size: 15px;
+      font-weight: 600;
+      margin-bottom: 4px;
+      display: flex;
+      justify-content: space-between;
+    }
+
+    .screen-header-title {
+      color: #ffffff;
+      font-size: 30px;
+      font-weight: 800;
+      margin-bottom: 14px;
+    }
+
+    /* ---------------- สไตล์ Card ---------------- */
+    .card-block {
+      background: #ffffff;
+      border-radius: 18px;
+      padding: 16px 16px;
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+      margin-bottom: 12px;
+    }
+
+    .field-group {
+      margin-bottom: 14px;
+    }
+
+    .field-group:last-child {
+      margin-bottom: 0;
+    }
+
+    label.field-title {
+      display: block;
+      font-size: 17px;
+      font-weight: 700;
+      color: var(--navy-dark);
+      margin-bottom: 8px;
+    }
+
+    .sub-label-note {
+      font-size: 13.5px;
+      color: #64748b;
+      margin-top: -4px;
+      margin-bottom: 8px;
+      font-weight: 500;
+    }
+
+    .input-field {
+      width: 100%;
+      height: 52px;
+      border: 2px solid var(--border-input);
+      border-radius: 12px;
+      padding: 0 16px;
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--text-main);
+      background-color: #ffffff;
+      outline: none;
+    }
+
+    select.input-field {
+      cursor: pointer;
+      appearance: none;
+      background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%231b355a' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+      background-repeat: no-repeat;
+      background-position: right 14px center;
+      background-size: 18px;
+      padding-right: 40px;
+    }
+
+    .input-date {
+      cursor: pointer;
+      font-size: 19px;
+      font-weight: 700;
+    }
+
+    .readonly-box {
+      background-color: #eaf1fb;
+      border: none;
+      display: flex;
+      align-items: center;
+      font-weight: 700;
+      color: var(--navy-dark);
+    }
+    .readonly-box span {
+      font-weight: 400;
+      font-size: 14px;
+      color: #64748b;
+      margin-left: 6px;
+    }
+
+    .sub-hint-text {
+      font-size: 13.5px;
+      color: #64748b;
+      margin-top: 6px;
+      font-weight: 500;
+    }
+
+    .mile-info-bar {
+      margin-top: 8px;
+      background: #eaf2fb;
+      border-radius: 10px;
+      padding: 10px 14px;
+      display: flex;
+      justify-content: space-between;
+      font-size: 15px;
+      font-weight: 600;
+      color: #334155;
+    }
+
+    .choice-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+
+    .btn-choice {
+      height: 54px;
+      border-radius: 12px;
+      font-size: 20px;
+      font-weight: 700;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border: 2px solid var(--navy-dark);
+      background: #ffffff;
+      color: var(--navy-dark);
+      transition: all 0.1s ease;
+    }
+
+    .btn-choice.active-navy {
+      background: var(--navy-btn);
+      border-color: var(--navy-btn);
+      color: #ffffff;
+    }
+
+    .btn-choice.active-orange {
+      background: var(--orange);
+      border-color: var(--orange);
+      color: #ffffff;
+    }
+
+    .action-group {
+      margin-top: auto;
+      padding-top: 8px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .btn-main {
+      width: 100%;
+      height: 56px;
+      border-radius: 14px;
+      font-size: 19px;
+      font-weight: 700;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border: none;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    }
+
+    .btn-navy { background: var(--navy-btn); color: #ffffff; }
+    .btn-green { background: var(--green); color: #ffffff; }
+    .btn-orange-outline { background: #fed7aa; border: 2px solid var(--navy-dark); color: var(--navy-dark); }
+    .btn-outline-back { background: #ffffff; border: 2px solid var(--navy-dark); color: var(--navy-dark); }
+
+    .summary-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 10px 0;
+      border-bottom: 1px solid #f1f5f9;
+      font-size: 18px;
+      font-weight: 600;
+      color: var(--navy-dark);
+    }
+    .summary-row:last-child {
+      border-bottom: none;
+    }
+    .summary-val {
+      font-size: 22px;
+      font-weight: 800;
+      color: #0f172a;
+    }
+
+    .warning-box {
+      background: var(--warning-bg);
+      border-radius: 16px;
+      padding: 14px 16px;
+      color: var(--warning-text);
+      font-size: 15px;
+      font-weight: 600;
+      line-height: 1.4;
+      display: flex;
+      gap: 8px;
+      margin-bottom: 20px;
+    }
+
+    #loading-overlay {
+      display: none;
+      position: fixed;
+      top: 0; left: 0; width: 100%; height: 100%;
+      background: rgba(0,0,0,0.6);
+      z-index: 999;
+      justify-content: center;
+      align-items: center;
+      color: white;
+      font-size: 20px;
+      font-weight: bold;
+      flex-direction: column;
+      gap: 15px;
+    }
+    .spinner {
+      width: 50px; height: 50px;
+      border: 5px solid #f3f3f3;
+      border-top: 5px solid #d97724;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+    }
+    @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+  </style>
+</head>
+<body>
+
+  <div id="loading-overlay">
+    <div class="spinner"></div>
+    <div>กำลังบันทึกข้อมูลเข้า Google Sheets...</div>
+  </div>
+
+  <div class="app-container">
+
+    <!-- ================= หน้า 1: เลือกรถของคุณ ================= -->
+    <div id="screen-select-truck" class="screen active">
+      <div class="select-truck-title">เลือกรถของคุณ</div>
+      <div class="select-truck-sub">กดปุ่มทะเบียนรถที่ขับวันนี้</div>
+
+      <div class="truck-card-list">
+        <div class="truck-card" onclick="selectTruck('73-3490', 'นายจันทร์ดี', 654024)">
+          <div class="truck-plate">73-3490</div>
+          <div class="truck-driver">นายจันทร์ดี</div>
+        </div>
+
+        <div class="truck-card" onclick="selectTruck('73-3489', 'นายธีรยุทธ', 428100)">
+          <div class="truck-plate">73-3489</div>
+          <div class="truck-driver">นายธีรยุทธ</div>
+        </div>
+
+        <div class="truck-card" onclick="selectTruck('73-3487', 'นายภุชพงษ์', 612050)">
+          <div class="truck-plate">73-3487</div>
+          <div class="truck-driver">นายภุชพงษ์</div>
+        </div>
+      </div>
+
+      <div class="brand-section">
+        <div class="truck-icon-box">
+          <svg class="truck-icon-svg" viewBox="0 0 512 512" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M352 160H192C174.327 160 160 174.327 160 192V320H384V192C384 174.327 369.673 160 352 160Z" fill="#E11D2A"/>
+            <path d="M128 208H32V320H128V208Z" fill="#EF4444"/>
+            <path d="M32 240H16V304H32V240Z" fill="#94A3B8"/>
+            <path d="M416 192H384V320H480V256L416 192Z" fill="#DC2626"/>
+            <path d="M72 224H104V264H72V224Z" fill="#E2E8F0"/>
+            <circle cx="96" cy="320" r="32" fill="#1E293B"/>
+            <circle cx="96" cy="320" r="12" fill="#94A3B8"/>
+            <circle cx="240" cy="320" r="32" fill="#1E293B"/>
+            <circle cx="240" cy="320" r="12" fill="#94A3B8"/>
+            <circle cx="416" cy="320" r="32" fill="#1E293B"/>
+            <circle cx="416" cy="320" r="12" fill="#94A3B8"/>
+          </svg>
+        </div>
+        <div class="bcc-brand-name">BCC.</div>
+      </div>
+
+      <div class="footer-help">ทะเบียนไม่ตรงกับรถที่ขับ? แจ้งออฟฟิศ</div>
+    </div>
+
+
+    <!-- ================= หน้า 2: ออกจาก BCC ================= -->
+    <div id="screen-start-bcc" class="screen">
+      <div class="top-sub-bar">
+        <span id="label-truck-bcc">ทะเบียน 73-3490 · นายจันทร์ดี</span>
+      </div>
+      <div class="screen-header-title">ออกจาก BCC</div>
+
+      <div class="card-block">
+        <label class="field-title">ชื่อ Trip</label>
+        <input type="text" class="input-field" id="trip-name-input" value="GBH-อิสานซ้าย">
+      </div>
+
+      <div class="card-block">
+        <div class="field-group">
+          <label class="field-title">1. วันที่ออก</label>
+          <input type="date" class="input-field input-date" id="date-out">
+        </div>
+
+        <div class="field-group">
+          <label class="field-title">2. เลขไมล์ (กม.)</label>
+          <input type="number" class="input-field" id="start-mile-input" inputmode="numeric">
+          <div class="sub-hint-text" id="prev-mile-hint">ไมล์ครั้งก่อน ต้องไม่น้อยกว่านี้</div>
+        </div>
+      </div>
+
+      <div class="card-block">
+        <div class="field-group">
+          <label class="field-title">3. น้ำหนักสินค้า+รถ (กก.)</label>
+          <input type="number" class="input-field" id="weight-input" value="28650" inputmode="numeric">
+        </div>
+
+        <div class="field-group">
+          <label class="field-title">4. จำนวนสินค้า (Sku)</label>
+          <input type="number" class="input-field" id="sku-input" value="9865" inputmode="numeric">
+        </div>
+      </div>
+
+      <div class="card-block">
+        <label class="field-title">5. เติมน้ำมันที่ BCC ไหม</label>
+        <div class="choice-row">
+          <button type="button" class="btn-choice active-navy" id="btn-fuel-bcc-yes" onclick="toggleStartFuel(true)">ใช่</button>
+          <button type="button" class="btn-choice" id="btn-fuel-bcc-no" onclick="toggleStartFuel(false)">ไม่ใช่</button>
+        </div>
+
+        <div id="bcc-fuel-liters-box" style="margin-top: 12px;">
+          <label class="field-title" style="font-size: 15px;">จำนวนลิตรที่เติม</label>
+          <input type="number" class="input-field" id="start-fuel-liters" value="800" inputmode="numeric">
+        </div>
+      </div>
+
+      <div class="action-group">
+        <div style="display: grid; grid-template-columns: 1fr 2fr; gap: 10px;">
+          <button class="btn-main btn-outline-back" onclick="goToScreen('screen-select-truck')">← เลือกรถ</button>
+          <button class="btn-main btn-navy" onclick="saveBccAndStartPoints()">บันทึก → จุดที่ 1</button>
+        </div>
+      </div>
+    </div>
+
+
+    <!-- ================= หน้า บันทึกจุดที่ 1 ถึง 21 ================= -->
+    <div id="screen-point" class="screen">
+      <div class="top-sub-bar">
+        <span id="point-trip-tag">ทริป · 73-3490</span>
+        <span id="point-status-tag">ถึงแล้ว 0 จุด</span>
+      </div>
+      <div class="screen-header-title" id="point-title-text">จุดที่ 1</div>
+
+      <div class="card-block">
+        <div class="field-group">
+          <label class="field-title">วันที่ถึงจุด</label>
+          <input type="date" class="input-field input-date" id="p-date">
+        </div>
+        <div class="sub-label-note" id="p-date-note">(จุดที่ 1–4 มีวันที่ถึงจุด)</div>
+
+        <div class="field-group">
+          <label class="field-title">1. ไปที่จังหวัด</label>
+          <select class="input-field" id="p-province">
+            <!-- 77 จังหวัด -->
+          </select>
+        </div>
+
+        <div class="field-group">
+          <label class="field-title">2. ชื่อลูกค้า / สถานที่</label>
+          <input type="text" class="input-field" id="p-customer" placeholder="พิมพ์ชื่อลูกค้า / สถานที่">
+        </div>
+
+        <div class="field-group">
+          <label class="field-title">3. เลขไมล์ (กม.)</label>
+          <input type="number" class="input-field" id="p-mile" inputmode="numeric" oninput="updateCurrentPointDiff()">
+          <div class="mile-info-bar">
+            <span id="p-prev-mile-text">ไมล์จุดก่อน: 0</span>
+            <span id="p-diff-mile-text">วิ่งมา 0 กม.</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="card-block">
+        <label class="field-title">4. เติมน้ำมันที่จุดนี้ไหม</label>
+        <div class="choice-row">
+          <button type="button" class="btn-choice" id="btn-p-fuel-yes" onclick="togglePointFuel(true)">เติม</button>
+          <button type="button" class="btn-choice active-navy" id="btn-p-fuel-no" onclick="togglePointFuel(false)">ไม่เติม ✓</button>
+        </div>
+        <div class="sub-hint-text" id="p-fuel-hint">ไม่เติมน้ำมัน ไม่ต้องกรอกลิตร</div>
+
+        <div id="p-fuel-inputs" style="display: none; margin-top: 12px;">
+          <label class="field-title" style="font-size: 15px;">เติมจาก</label>
+          <div class="choice-row" style="margin-bottom: 10px;">
+            <button type="button" class="btn-choice" id="btn-psource-bcc" onclick="setPointFuelSource('BCC')">BCC</button>
+            <button type="button" class="btn-choice active-navy" id="btn-psource-out" onclick="setPointFuelSource('นอก')">นอก</button>
+          </div>
+          <label class="field-title" style="font-size: 15px;">จำนวนลิตร</label>
+          <input type="number" class="input-field" id="p-fuel-liters" placeholder="ระบุลิตร" inputmode="numeric">
+        </div>
+      </div>
+
+      <div class="action-group">
+        <div style="display: grid; grid-template-columns: 1fr 2fr; gap: 10px;">
+          <button class="btn-main btn-outline-back" onclick="goPreviousPoint()" id="btn-prev-point">← ย้อนกลับ</button>
+          <button class="btn-main btn-navy" onclick="goNextPoint()" id="btn-next-point">บันทึก → จุดที่ 2</button>
+        </div>
+        <button class="btn-main btn-green" onclick="finishToBcc()" style="height: 48px; font-size: 16px;">จบทริปกลับ BCC (วิ่งไม่ถึง 21 จุด)</button>
+      </div>
+    </div>
+
+
+    <!-- ================= หน้า กลับถึง BCC ================= -->
+    <div id="screen-return-bcc" class="screen">
+      <div class="top-sub-bar">
+        <span id="return-trip-tag">ทริป · 73-3490</span>
+        <span id="return-points-done">ส่งครบแล้ว</span>
+      </div>
+      <div class="screen-header-title">กลับถึง BCC</div>
+
+      <div class="card-block">
+        <div class="field-group">
+          <label class="field-title">วันที่ถึง BCC</label>
+          <input type="date" class="input-field input-date" id="return-date">
+        </div>
+
+        <div class="field-group">
+          <label class="field-title">ถึงที่</label>
+          <div class="input-field readonly-box">
+            BCC ระยอง <span>(กรอกอัตโนมัติ)</span>
+          </div>
+        </div>
+
+        <div class="field-group">
+          <label class="field-title">เลขไมล์ที่ BCC (กม.)</label>
+          <input type="number" class="input-field" id="return-mile" inputmode="numeric" oninput="updateReturnDiff()">
+          <div class="mile-info-bar">
+            <span id="return-last-mile-label">ไมล์จุดสุดท้าย: 0</span>
+            <span id="return-diff-label">วิ่งมา 0 กม.</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="card-block">
+        <label class="field-title">เติมน้ำมันที่ BCC ไหม</label>
+        <div class="choice-row">
+          <button type="button" class="btn-choice" id="btn-retfuel-yes" onclick="toggleReturnFuel(true)">เติม</button>
+          <button type="button" class="btn-choice active-navy" id="btn-retfuel-no" onclick="toggleReturnFuel(false)">ไม่เติม</button>
+        </div>
+        <div id="return-fuel-box" style="display: none; margin-top: 12px;">
+          <label class="field-title" style="font-size: 15px;">จำนวนลิตรที่เติม (BCC)</label>
+          <input type="number" class="input-field" id="return-fuel-liters" value="0" inputmode="numeric">
+        </div>
+      </div>
+
+      <div class="action-group">
+        <div style="display: grid; grid-template-columns: 1fr 2fr; gap: 10px;">
+          <button class="btn-main btn-outline-back" onclick="backFromReturnToPoint()">← ย้อนกลับ</button>
+          <button class="btn-main btn-green" onclick="goToSummaryScreen()">ถึง BCC แล้ว → สรุป</button>
+        </div>
+      </div>
+    </div>
+
+
+    <!-- ================= หน้า สรุปเที่ยวนี้ ================= -->
+    <div id="screen-summary" class="screen">
+      <div class="screen-header-title" style="margin-bottom: 4px;">สรุปเที่ยวนี้</div>
+      <div id="summary-sub-header" style="color: rgba(255,255,255,0.9); font-size: 15px; font-weight: 600; margin-bottom: 16px;">
+        73-3490 · นายจันทร์ดี · กลับถึง BCC แล้ว
+      </div>
+
+      <div class="card-block">
+        <div class="summary-row">
+          <span>วิ่งไป</span>
+          <span class="summary-val" id="sum-dist">0 กม.</span>
+        </div>
+        <div class="summary-row">
+          <span>เติมน้ำมันรวม</span>
+          <span class="summary-val" id="sum-fuel">0 ลิตร</span>
+        </div>
+        <div class="summary-row">
+          <span>จำนวนจุด</span>
+          <span class="summary-val" id="sum-points">0 จุด</span>
+        </div>
+        <div class="summary-row">
+          <span>กม. ต่อลิตร</span>
+          <span class="summary-val" id="sum-kml">0.00</span>
+        </div>
+      </div>
+
+      <div class="warning-box">
+        <span>✓</span>
+        <span>ตรวจสอบข้อมูลครบถ้วนแล้ว กด "บันทึกเที่ยวนี้" เพื่อส่งเข้า Google Sheets</span>
+      </div>
+
+      <div class="action-group">
+        <button class="btn-main btn-green" onclick="saveTripToCloud()">บันทึกเที่ยวนี้</button>
+        <button class="btn-main btn-orange-outline" onclick="goToScreen('screen-return-bcc')">ย้อนกลับไปแก้ไข</button>
+      </div>
+    </div>
+
+  </div>
+
+  <script>
+    // ----------------------------------------------------
+    // นำลิงก์ Web App URL ที่ได้จาก Apps Script มาวางแทนที่ข้อความข้างล่างนี้
+    // ----------------------------------------------------
+    const APPS_SCRIPT_URL = https://script.google.com/macros/s/AKfycbxh68nwpIYT-vkUl0a5L7cur2repsFc3uj17e8q2aHg_RoLJAcoe4FJZPCsJwHElcgtkg/exec;
+
+    const provinces = [
+      "กรุงเทพมหานคร", "กระบี่", "กาญจนบุรี", "กาฬสินธุ์", "กำแพงเพชร", 
+      "ขอนแก่น", "จันทบุรี", "ฉะเชิงเทรา", "ชลบุรี", "ชัยนาท", 
+      "ชัยภูมิ", "ชุมพร", "เชียงราย", "เชียงใหม่", "ตรัง", 
+      "ตราด", "ตาก", "นครนายก", "นครปฐม", "นครพนม", 
+      "นครราชสีมา", "นครศรีธรรมราช", "นครสวรรค์", "นนทบุรี", "นราธิวาส", 
+      "น่าน", "บึงกาฬ", "บุรีรัมย์", "ปทุมธานี", "ประจวบคีรีขันธ์", 
+      "ปราจีนบุรี", "ปัตตานี", "พระนครศรีอยุธยา", "พะเยา", "พังงา", 
+      "พัทลุง", "พิจิตร", "พิษณุโลก", "เพชรบุรี", "เพชรบูรณ์", 
+      "แพร่", "ภูเก็ต", "มหาสารคาม", "มุกดาหาร", "แม่ฮ่องสอน", 
+      "ยโสธร", "ยะลา", "ร้อยเอ็ด", "ระนอง", "ระยอง", 
+      "ราชบุรี", "ลพบุรี", "ลำปาง", "ลำพูน", "เลย", 
+      "ศรีสะเกษ", "สกลนคร", "สงขลา", "สตูล", "สมุทรปราการ", 
+      "สมุทรสงคราม", "สมุทรสาคร", "สระแก้ว", "สระบุรี", "สิงห์บุรี", 
+      "สุโขทัย", "สุพรรณบุรี", "สุราษฎร์ธานี", "สุรินทร์", "หนองคาย", 
+      "หนองบัวลำภู", "อ่างทอง", "อำนาจเจริญ", "อุดรธานี", "อุตรดิตถ์", 
+      "อุทัยธานี", "อุบลราชธานี"
+    ];
+
+    let currentPlate = '73-3490';
+    let currentDriver = 'นายจันทร์ดี';
+    let startMile = 654024;
+    let bccFuel = 800;
+
+    let currentPointIdx = 1;
+    let pointsData = [];
+
+    function setDefaultDates() {
+      const today = new Date().toISOString().split('T')[0];
+      document.getElementById('date-out').value = today;
+      document.getElementById('return-date').value = today;
+    }
+
+    function initData() {
+      pointsData = [];
+      const today = new Date().toISOString().split('T')[0];
+      for (let i = 1; i <= 21; i++) {
+        pointsData.push({
+          date: today,
+          province: '',
+          customer: '',
+          mile: '',
+          fuel: false,
+          fuelSource: 'นอก',
+          liters: 0
+        });
+      }
+    }
+
+    function initProvinceDropdown() {
+      const sel = document.getElementById('p-province');
+      sel.innerHTML = '<option value="">-- เลือกจังหวัด --</option>';
+      provinces.forEach(p => {
+        const opt = document.createElement('option');
+        opt.value = p;
+        opt.innerText = p;
+        sel.appendChild(opt);
+      });
+    }
+
+    function selectTruck(plate, driver, prevMile) {
+      currentPlate = plate;
+      currentDriver = driver;
+      startMile = prevMile;
+
+      document.getElementById('label-truck-bcc').innerText = `ทะเบียน ${plate} · ${driver}`;
+      document.getElementById('trip-name-input').value = `GBH-${plate}`;
+      document.getElementById('start-mile-input').value = prevMile;
+      document.getElementById('prev-mile-hint').innerText = `ไมล์ครั้งก่อน ${prevMile.toLocaleString()} ต้องไม่น้อยกว่านี้`;
+
+      goToScreen('screen-start-bcc');
+    }
+
+    function saveBccAndStartPoints() {
+      startMile = parseFloat(document.getElementById('start-mile-input').value) || 0;
+      bccFuel = document.getElementById('btn-fuel-bcc-yes').classList.contains('active-navy') 
+                ? (parseFloat(document.getElementById('start-fuel-liters').value) || 0) : 0;
+      
+      currentPointIdx = 1;
+      renderPointScreen(currentPointIdx);
+      goToScreen('screen-point');
+    }
+
+    function renderPointScreen(idx) {
+      currentPointIdx = idx;
+      const data = pointsData[idx - 1];
+
+      document.getElementById('point-trip-tag').innerText = `ทริป · ${currentPlate}`;
+      document.getElementById('point-status-tag').innerText = `ถึงแล้ว ${idx - 1} จุด`;
+      document.getElementById('point-title-text').innerText = `จุดที่ ${idx}`;
+
+      document.getElementById('p-date-note').innerText = (idx <= 4) ? `(จุดที่ 1–4 มีวันที่ถึงจุด)` : `(จุดที่ 5–21 ไม่มีวันที่ถึงจุด)`;
+
+      const today = new Date().toISOString().split('T')[0];
+      document.getElementById('p-date').value = data.date || today;
+      document.getElementById('p-province').value = data.province || '';
+      document.getElementById('p-customer').value = data.customer || '';
+      document.getElementById('p-mile').value = data.mile || '';
+
+      const prevMile = (idx === 1) ? startMile : (pointsData[idx - 2].mile || startMile);
+      const prevLabel = (idx === 1) ? 'ไมล์ BCC' : `ไมล์จุดที่ ${idx - 1}`;
+      document.getElementById('p-prev-mile-text').innerText = `${prevLabel}: ${prevMile.toLocaleString()}`;
+
+      updateCurrentPointDiff();
+
+      togglePointFuel(data.fuel);
+      setPointFuelSource(data.fuelSource || 'นอก');
+      document.getElementById('p-fuel-liters').value = data.liters || '';
+
+      if (idx === 21) {
+        document.getElementById('btn-next-point').innerText = 'บันทึก → กลับ BCC';
+      } else {
+        document.getElementById('btn-next-point').innerText = `บันทึก → จุดที่ ${idx + 1}`;
+      }
+
+      if (idx === 1) {
+        document.getElementById('btn-prev-point').innerText = '← กลับ BCC';
+      } else {
+        document.getElementById('btn-prev-point').innerText = `← จุดที่ ${idx - 1}`;
+      }
+    }
+
+    function saveCurrentPointData() {
+      const idx = currentPointIdx;
+      pointsData[idx - 1] = {
+        date: document.getElementById('p-date').value,
+        province: document.getElementById('p-province').value,
+        customer: document.getElementById('p-customer').value,
+        mile: parseFloat(document.getElementById('p-mile').value) || '',
+        fuel: document.getElementById('btn-p-fuel-yes').classList.contains('active-orange'),
+        fuelSource: document.getElementById('btn-psource-bcc').classList.contains('active-navy') ? 'BCC' : 'นอก',
+        liters: parseFloat(document.getElementById('p-fuel-liters').value) || 0
+      };
+    }
+
+    function goNextPoint() {
+      saveCurrentPointData();
+      if (currentPointIdx < 21) {
+        currentPointIdx++;
+        renderPointScreen(currentPointIdx);
+      } else {
+        finishToBcc();
+      }
+    }
+
+    function goPreviousPoint() {
+      saveCurrentPointData();
+      if (currentPointIdx > 1) {
+        currentPointIdx--;
+        renderPointScreen(currentPointIdx);
+      } else {
+        goToScreen('screen-start-bcc');
+      }
+    }
+
+    function finishToBcc() {
+      saveCurrentPointData();
+
+      let lastMile = startMile;
+      let recordedPoints = 0;
+      for (let i = 0; i < pointsData.length; i++) {
+        if (pointsData[i].mile) {
+          lastMile = pointsData[i].mile;
+          recordedPoints = i + 1;
+        }
+      }
+
+      document.getElementById('return-trip-tag').innerText = `ทริป · ${currentPlate}`;
+      document.getElementById('return-points-done').innerText = `ส่งครบ ${recordedPoints} จุด`;
+      document.getElementById('return-last-mile-label').innerText = `ไมล์จุดสุดท้าย: ${lastMile.toLocaleString()}`;
+
+      const returnInput = document.getElementById('return-mile');
+      if (!returnInput.value || parseFloat(returnInput.value) <= lastMile) {
+        returnInput.value = lastMile + 200;
+      }
+
+      updateReturnDiff();
+      goToScreen('screen-return-bcc');
+    }
+
+    function backFromReturnToPoint() {
+      goToScreen('screen-point');
+    }
+
+    function updateCurrentPointDiff() {
+      const idx = currentPointIdx;
+      const prevMile = (idx === 1) ? startMile : (pointsData[idx - 2].mile || startMile);
+      const curr = parseFloat(document.getElementById('p-mile').value) || 0;
+      const diff = curr - prevMile;
+      document.getElementById('p-diff-mile-text').innerText = (diff > 0) ? `วิ่งมา ${diff.toLocaleString()} กม.` : `วิ่งมา 0 กม.`;
+    }
+
+    function updateReturnDiff() {
+      let lastMile = startMile;
+      for (let i = 0; i < pointsData.length; i++) {
+        if (pointsData[i].mile) lastMile = pointsData[i].mile;
+      }
+      const retMile = parseFloat(document.getElementById('return-mile').value) || 0;
+      const diff = retMile - lastMile;
+      document.getElementById('return-diff-label').innerText = (diff > 0) ? `วิ่งมา ${diff.toLocaleString()} กม.` : `วิ่งมา 0 กม.`;
+    }
+
+    function goToSummaryScreen() {
+      const finalReturnMile = parseFloat(document.getElementById('return-mile').value) || 0;
+      const totalDistance = finalReturnMile - startMile;
+
+      let totalFuel = bccFuel;
+      let pointsCount = 0;
+
+      pointsData.forEach(p => {
+        if (p.mile) pointsCount++;
+        if (p.fuel && p.liters) totalFuel += p.liters;
+      });
+
+      if (document.getElementById('btn-retfuel-yes').classList.contains('active-orange')) {
+        totalFuel += (parseFloat(document.getElementById('return-fuel-liters').value) || 0);
+      }
+
+      const kml = (totalFuel > 0 && totalDistance > 0) ? (totalDistance / totalFuel).toFixed(2) : 0;
+
+      document.getElementById('summary-sub-header').innerText = `${currentPlate} · ${currentDriver} · กลับถึง BCC แล้ว`;
+      document.getElementById('sum-dist').innerText = `${totalDistance.toLocaleString()} กม.`;
+      document.getElementById('sum-fuel').innerText = `${totalFuel.toLocaleString()} ลิตร`;
+      document.getElementById('sum-points').innerText = `${pointsCount} จุด`;
+      document.getElementById('sum-kml').innerText = kml;
+
+      goToScreen('screen-summary');
+    }
+
+    function toggleStartFuel(isYes) {
+      const btnYes = document.getElementById('btn-fuel-bcc-yes');
+      const btnNo = document.getElementById('btn-fuel-bcc-no');
+      const sec = document.getElementById('bcc-fuel-liters-box');
+      if (isYes) {
+        btnYes.classList.add('active-navy');
+        btnNo.classList.remove('active-navy');
+        sec.style.display = 'block';
+      } else {
+        btnYes.classList.remove('active-navy');
+        btnNo.classList.add('active-navy');
+        sec.style.display = 'none';
+      }
+    }
+
+    function togglePointFuel(isYes) {
+      const btnYes = document.getElementById('btn-p-fuel-yes');
+      const btnNo = document.getElementById('btn-p-fuel-no');
+      const sec = document.getElementById('p-fuel-inputs');
+      const hint = document.getElementById('p-fuel-hint');
+      if (isYes) {
+        btnYes.classList.add('active-orange');
+        btnNo.classList.remove('active-navy');
+        sec.style.display = 'block';
+        hint.style.display = 'none';
+      } else {
+        btnYes.classList.remove('active-orange');
+        btnNo.classList.add('active-navy');
+        sec.style.display = 'none';
+        hint.style.display = 'block';
+      }
+    }
+
+    function setPointFuelSource(src) {
+      const bcc = document.getElementById('btn-psource-bcc');
+      const out = document.getElementById('btn-psource-out');
+      if (src === 'BCC') {
+        bcc.classList.add('active-navy');
+        out.classList.remove('active-navy');
+      } else {
+        bcc.classList.remove('active-navy');
+        out.classList.add('active-navy');
+      }
+    }
+
+    function toggleReturnFuel(isYes) {
+      const btnYes = document.getElementById('btn-retfuel-yes');
+      const btnNo = document.getElementById('btn-retfuel-no');
+      const sec = document.getElementById('return-fuel-box');
+      if (isYes) {
+        btnYes.classList.add('active-orange');
+        btnNo.classList.remove('active-navy');
+        sec.style.display = 'block';
+      } else {
+        btnYes.classList.remove('active-orange');
+        btnNo.classList.add('active-navy');
+        sec.style.display = 'none';
+      }
+    }
+
+    function goToScreen(screenId) {
+      document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+      const target = document.getElementById(screenId);
+      if (target) {
+        target.classList.add('active');
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      }
+    }
+
+    function saveTripToCloud() {
+      if (APPS_SCRIPT_URL === "วาง_WEB_APP_URL_ที่นี่") {
+        alert('กรุณาใส่ลิงก์ APPS_SCRIPT_URL ในโค้ดก่อนกดบันทึกจริง');
+        return;
+      }
+
+      document.getElementById('loading-overlay').style.display = 'flex';
+
+      const tripName = document.getElementById('trip-name-input').value;
+      const startDate = document.getElementById('date-out').value;
+      const returnDate = document.getElementById('return-date').value;
+      const returnMile = parseFloat(document.getElementById('return-mile').value) || 0;
+      
+      let totalPointsCount = 0;
+      let formattedPoints = [];
+
+      formattedPoints.push({
+        sequence: 0,
+        pointLabel: 'BCC (เริ่มต้น)',
+        date: startDate,
+        customer: 'BCC',
+        province: 'ระยอง',
+        mile: startMile,
+        bccFuel: bccFuel,
+        outFuel: '',
+        startWeight: parseFloat(document.getElementById('weight-input').value) || 0,
+        startSku: parseFloat(document.getElementById('sku-input').value) || 0,
+        distancePeriod: 0
+      });
+
+      let lastM = startMile;
+
+      pointsData.forEach((p, idx) => {
+        if (p.mile) {
+          totalPointsCount++;
+          let dist = p.mile - lastM;
+          lastM = p.mile;
+
+          formattedPoints.push({
+            sequence: idx + 1,
+            pointLabel: `จุดที่ ${idx + 1}`,
+            date: p.date,
+            customer: p.customer,
+            province: p.province,
+            mile: p.mile,
+            bccFuel: (p.fuel && p.fuelSource === 'BCC') ? p.liters : '',
+            outFuel: (p.fuel && p.fuelSource === 'นอก') ? p.liters : '',
+            startWeight: '',
+            startSku: '',
+            distancePeriod: dist
+          });
+        }
+      });
+
+      let finalDist = returnMile - lastM;
+      let retBccFuel = document.getElementById('btn-retfuel-yes').classList.contains('active-orange') 
+                       ? (parseFloat(document.getElementById('return-fuel-liters').value) || 0) : 0;
+
+      formattedPoints.push({
+        sequence: 22,
+        pointLabel: 'BCC (ขากลับ)',
+        date: returnDate,
+        customer: 'BCC',
+        province: 'ระยอง',
+        mile: returnMile,
+        bccFuel: retBccFuel,
+        outFuel: '',
+        startWeight: '',
+        startSku: '',
+        distancePeriod: finalDist
+      });
+
+      const payload = {
+        type: 'full_trip',
+        tripName: tripName,
+        plate: currentPlate,
+        driver: currentDriver,
+        startDate: startDate,
+        totalPoints: totalPointsCount,
+        startMile: startMile,
+        returnMile: returnMile,
+        totalDistance: document.getElementById('sum-dist').innerText,
+        totalFuel: document.getElementById('sum-fuel').innerText,
+        kml: document.getElementById('sum-kml').innerText,
+        pointsArray: formattedPoints
+      };
+
+      fetch(APPS_SCRIPT_URL, {
+        method: "POST",
+        mode: "no-cors",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload)
+      })
+      .then(() => {
+        document.getElementById('loading-overlay').style.display = 'none';
+        alert('บันทึกข้อมูลเข้า Google Sheets สำเร็จเรียบร้อย!');
+        initData();
+        goToScreen('screen-select-truck');
+      })
+      .catch((err) => {
+        document.getElementById('loading-overlay').style.display = 'none';
+        console.error(err);
+        alert('เกิดข้อผิดพลาดในการเชื่อมต่อ กรุณาลองใหม่อีกครั้ง');
+      });
+    }
+
+    setDefaultDates();
+    initData();
+    initProvinceDropdown();
+  </script>
+</body>
+</html>
