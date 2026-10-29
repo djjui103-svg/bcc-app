@@ -719,8 +719,8 @@
       startMile = prevMile;
 
       document.getElementById('label-truck-bcc').innerText = `ทะเบียน ${plate} · ${driver}`;
-      document.getElementById('trip-name-input').value = `GBH-${plate}`;
-      document.getElementById('start-mile-input').value = prevMile;
+      // document.getElementById('trip-name-input').value = `GBH-${plate}`;
+      // document.getElementById('start-mile-input').value = prevMile;
       document.getElementById('prev-mile-hint').innerText = `ไมล์ครั้งก่อน ${prevMile.toLocaleString()} ต้องไม่น้อยกว่านี้`;
 
       goToScreen('screen-start-bcc');
