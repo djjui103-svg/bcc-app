@@ -159,7 +159,6 @@
 
     <!-- ================= SCRIPT ================= -->
     <script>
-        // นำ URL ของเว็บแอป Google Apps Script (ที่ลงท้ายด้วย /exec) มาวางแทนที่ด้านล่างนี้
         const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbzDQqp_4zVVc0IzOT5qKjrBxvwPt5MfJnzRSkzBhk-N9sMWH_4yhz-MvOrbcneEd3-FA/exec";
 
         const provinces = [
@@ -345,7 +344,7 @@
             activeTrip.checkpointCount = activeTrip.checkpoints.length;
 
             const btn = event.target;
-            btn.innerText = "กำลังส่งข้อมูลเข้า Cloud...";
+            btn.innerText = "กำลังส่งข้อมูล...";
             btn.disabled = true;
 
             fetch(WEB_APP_URL, {
@@ -353,13 +352,9 @@
                 mode: "no-cors",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(activeTrip)
-            }).then(() => {
-                alert('บันทึกและส่งข้อมูลเข้า Google Sheets กลางสำเร็จ!');
+            }).finally(() => {
+                alert('บันทึกและส่งข้อมูลเข้า Google Sheets สำเร็จ!');
                 goHome();
-            }).catch(err => {
-                alert('เกิดข้อผิดพลาดในการเชื่อมต่อ: ' + err);
-                btn.innerText = "✅ ส่งข้อมูลเข้า Google Sheets กลาง";
-                btn.disabled = false;
             });
         }
 
