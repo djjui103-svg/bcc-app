@@ -470,17 +470,35 @@
 
             fetch(WEB_APP_URL, {
                 method: "POST",
-                mode: "no-cors",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify(activeTrip)
-            }).finally(() => {
-                // ลบออกจากความจำเครื่องเมื่อส่งสำเร็จ
-                let savedTrips = JSON.parse(localStorage.getItem('bcc_saved_trips') || '{}');
-                if(activeTrip.tripName && savedTrips[activeTrip.tripName]) {
-                    delete savedTrips[activeTrip.tripName];
-                    localStorage.setItem('bcc_saved_trips', JSON.stringify(savedTrips));
+                headers: { "Content-Type": "text/plain;charset=utf-8" },
+                body: JSON.stringify({
+                    action: "submitFinalTrip",
+                    data: activeTrip
+                })
+            })
+            .then(response => response.json())
+            .then(result => {
+                if(result.status === "success") {
+                    let savedTrips = JSON.parse(localStorage.getItem('bcc_saved_trips') || '{}');
+                    if(activeTrip.tripName && savedTrips[activeTrip.tripName]) {
+                        delete savedTrips[activeTrip.tripName];
+                        localStorage.setItem('bcc_saved_trips', JSON.stringify(savedTrips));
+                    }
+                    alert('ส่งข้อมูลครั้งสุดท้ายเข้า Google Sheets สำเร็จ!');
+                    goHome();
+                } else {
+                    alert('เกิดข้อผิดพลาดจากเซิร์ฟเวอร์: ' + (result.message || 'ไม่ทราบสาเหตุ'));
+                    btn.innerText = "✅ ส่งข้อมูลเข้า Google Sheets ครั้งสุดท้าย";
+                    btn.disabled = false;
                 }
-
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('ไม่สามารถเชื่อมต่อกับเซิร์ฟเวอร์ได้');
+                btn.innerText = "✅ ส่งข้อมูลเข้า Google Sheets ครั้งสุดท้าย";
+                btn.disabled = false;
+            });
+        }
                 alert('ส่งข้อมูลครั้งสุดท้ายเข้า Google Sheets สำเร็จ!');
                 goHome();
             });
