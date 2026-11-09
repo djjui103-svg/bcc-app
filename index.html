@@ -22,6 +22,17 @@
 
         <!-- ================= PAGE 1: หน้าแรก ================= -->
         <div id="view-home" class="space-y-4">
+            <!-- ดึง Trip เก่ามาทำต่อ -->
+            <div class="bg-slate-900 p-4 rounded-2xl border border-slate-800 space-y-2 shadow-lg">
+                <label class="block text-xs font-medium text-amber-400">เลือก Trip เดิมที่ค้างอยู่ (เพื่อทำต่อ / แก้ไข):</label>
+                <div class="flex gap-2">
+                    <select id="select-existing-trip" class="flex-1 bg-slate-950 border border-slate-800 rounded-xl p-2.5 text-xs text-white focus:outline-none focus:border-amber-500">
+                        <option value="">-- ยังไม่มี Trip ที่บันทึกไว้ --</option>
+                    </select>
+                    <button onclick="resumeTrip()" class="bg-amber-500/20 hover:bg-amber-500/30 text-amber-400 border border-amber-500/30 px-3 py-2 rounded-xl text-xs font-bold transition">ลุยต่อ</button>
+                </div>
+            </div>
+
             <div class="bg-slate-900 p-4 rounded-2xl border border-slate-800 space-y-3 shadow-lg">
                 <div class="flex justify-between items-center">
                     <label class="block text-xs font-medium text-slate-300">เลือกทะเบียนรถที่ท่านขับ:</label>
@@ -52,7 +63,7 @@
                     </div>
                     <div class="bg-slate-900/80 p-3 rounded-xl border border-slate-800/80 text-xs space-y-1">
                         <div class="text-slate-100 font-bold text-sm" id="card-truck-title">รถทะเบียน -</div>
-                        <div class="text-slate-400">สถานะ: <span class="text-emerald-400 font-medium">พร้อมส่งข้อมูลเข้า Cloud</span></div>
+                        <div class="text-slate-400">สถานะ: <span class="text-emerald-400 font-medium">พร้อมทยอยบันทึกข้อมูลทีละจุด</span></div>
                     </div>
                     <button onclick="goToStep1()" class="w-full bg-amber-500 hover:bg-amber-600 text-slate-950 font-bold py-3 px-4 rounded-xl text-sm transition shadow-lg">
                         1. เริ่มเปิดเที่ยวรถใหม่ <span id="card-driver-name" class="font-normal"></span>
@@ -99,39 +110,60 @@
         <!-- ================= STEP 2 ================= -->
         <div id="view-step2" class="hidden bg-slate-900 p-5 rounded-2xl border border-slate-800 space-y-4 shadow-xl">
             <div class="flex justify-between items-center border-b border-slate-800 pb-2">
-                <h2 id="cp-header-title" class="text-sm font-bold text-amber-400">2. จุดที่ 1 (จาก 21 จุด)</h2>
+                <h2 id="cp-header-title" class="text-sm font-bold text-amber-400">2. บันทึกจุดส่งของ</h2>
                 <button onclick="goToStep1()" class="text-[11px] bg-slate-800 text-amber-300 px-2.5 py-1 rounded-lg border border-slate-700">✏️ แก้ไข Start Trip</button>
             </div>
-            <div>
-                <label class="block text-xs text-slate-400 mb-1">วันที่</label>
-                <input type="date" id="cp-date" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 text-sm text-white focus:outline-none focus:border-amber-500">
+
+            <!-- ฟอร์มกรอกจุดปัจจุบัน -->
+            <div class="bg-slate-950 p-3.5 rounded-xl border border-slate-800 space-y-3">
+                <div class="text-xs font-bold text-slate-300">เพิ่ม / แก้ไข จุดส่งของ:</div>
+                <input type="hidden" id="edit-cp-index" value="-1">
+                <div>
+                    <label class="block text-[11px] text-slate-400 mb-1">วันที่</label>
+                    <input type="date" id="cp-date" class="w-full bg-slate-900 border border-slate-800 rounded-lg p-2 text-xs text-white focus:outline-none focus:border-amber-500">
+                </div>
+                <div>
+                    <label class="block text-[11px] text-slate-400 mb-1">ชื่อจุด / ลูกค้า</label>
+                    <input type="text" id="cp-customer" class="w-full bg-slate-900 border border-slate-800 rounded-lg p-2 text-xs text-white focus:outline-none focus:border-amber-500" placeholder="ระบุชื่อร้านค้า / จุดส่ง">
+                </div>
+                <div>
+                    <label class="block text-[11px] text-slate-400 mb-1">จังหวัด</label>
+                    <select id="cp-province" class="w-full bg-slate-900 border border-slate-800 rounded-lg p-2 text-xs text-white focus:outline-none focus:border-amber-500"></select>
+                </div>
+                <div class="grid grid-cols-2 gap-2">
+                    <div>
+                        <label class="block text-[11px] text-slate-400 mb-1">เลขไมล์ (กม.)</label>
+                        <input type="number" id="cp-mile" class="w-full bg-slate-900 border border-slate-800 rounded-lg p-2 text-xs text-white focus:outline-none focus:border-amber-500" oninput="removeLeadingZero(this)">
+                    </div>
+                    <div>
+                        <label class="block text-[11px] text-slate-400 mb-1">เติมน้ำมันนอก (ลิตร)</label>
+                        <input type="number" id="cp-oil" class="w-full bg-slate-900 border border-slate-800 rounded-lg p-2 text-xs text-white focus:outline-none focus:border-amber-500" placeholder="0 ถ้าไม่เติม" oninput="removeLeadingZero(this)">
+                    </div>
+                </div>
+                <button onclick="saveCurrentCheckpoint()" id="btn-save-cp" class="w-full bg-amber-500 hover:bg-amber-600 text-slate-950 font-bold py-2.5 rounded-lg text-xs transition">💾 บันทึกจุดนี้ (ลงเครื่องชั่วคราว)</button>
             </div>
-            <div>
-                <label class="block text-xs text-slate-400 mb-1">ชื่อจุด / ลูกค้า</label>
-                <input type="text" id="cp-customer" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 text-sm text-white focus:outline-none focus:border-amber-500" placeholder="ระบุชื่อร้านค้า / จุดส่ง">
+
+            <!-- ตารางแสดงจุดที่บันทึกแล้วทั้งหมด -->
+            <div class="space-y-2">
+                <div class="text-xs font-bold text-slate-400 flex justify-between items-center">
+                    <span>รายการจุดที่บันทึกแล้ว (<span id="cp-total-count">0</span> จุด)</span>
+                    <span class="text-[10px] text-amber-400">กด ✏️ เพื่อแก้ไข | 💾 เพื่อบันทึกทับ</span>
+                </div>
+                <div id="checkpoints-list-container" class="space-y-2 max-h-56 overflow-y-auto pr-1">
+                    <!-- รายการจุดจะถูกเรนเดอร์มาแสดงที่นี่ -->
+                </div>
             </div>
-            <div>
-                <label class="block text-xs text-slate-400 mb-1">จังหวัด</label>
-                <select id="cp-province" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 text-sm text-white focus:outline-none focus:border-amber-500"></select>
-            </div>
-            <div>
-                <label class="block text-xs text-slate-400 mb-1">เลขไมล์ (กม.)</label>
-                <input type="number" id="cp-mile" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 text-sm text-white focus:outline-none focus:border-amber-500" oninput="removeLeadingZero(this)">
-            </div>
-            <div>
-                <label class="block text-xs text-slate-400 mb-1">เติมน้ำมันจากข้างนอก (ลิตร)</label>
-                <input type="number" id="cp-oil" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 text-sm text-white focus:outline-none focus:border-amber-500" placeholder="เว้นว่างถ้าไม่เติม" oninput="removeLeadingZero(this)">
-            </div>
+
             <div class="space-y-2 pt-2">
-                <button onclick="saveCheckpoint(false)" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-3 rounded-xl text-sm transition">💾 บันทึกจุดนี้ & ไปจุดถัดไป</button>
                 <button onclick="goToStep3()" class="w-full bg-rose-600 hover:bg-rose-700 text-white font-bold py-3 rounded-xl text-sm transition">🏁 จบทริป: กลับถึง BCC</button>
+                <button onclick="goHome()" class="w-full bg-slate-800 hover:bg-slate-700 text-slate-300 py-2 rounded-xl text-xs transition">บันทึกเก็บไว้ทำต่อทีหลัง (กลับหน้าหลัก)</button>
             </div>
         </div>
 
         <!-- ================= STEP 3 ================= -->
         <div id="view-step3" class="hidden bg-slate-900 p-5 rounded-2xl border border-slate-800 space-y-4 shadow-xl">
             <div class="flex items-center gap-2 text-amber-400 font-bold text-sm border-b border-slate-800 pb-2">
-                <span>3. กลับถึง BCC (จบทริป)</span>
+                <span>3. กลับถึง BCC (ส่งข้อมูลครั้งสุดท้าย)</span>
             </div>
             <div>
                 <label class="block text-xs text-slate-400 mb-1">วันที่</label>
@@ -150,7 +182,7 @@
                 <input type="number" id="bcc-mile" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 text-sm text-white focus:outline-none focus:border-amber-500" oninput="removeLeadingZero(this)">
             </div>
             <div class="flex gap-2 pt-2">
-                <button onclick="finalizeTrip()" class="flex-1 bg-amber-500 hover:bg-amber-600 text-slate-950 font-bold py-3 rounded-xl text-sm transition">✅ ส่งข้อมูลเข้า Google Sheets กลาง</button>
+                <button onclick="finalizeTrip()" class="flex-1 bg-amber-500 hover:bg-amber-600 text-slate-950 font-bold py-3 rounded-xl text-sm transition">✅ ส่งข้อมูลเข้า Google Sheets ครั้งสุดท้าย</button>
                 <button onclick="showView('view-step2')" class="bg-slate-800 hover:bg-slate-700 text-slate-300 px-4 py-3 rounded-xl text-sm transition">ย้อนกลับ</button>
             </div>
         </div>
@@ -236,9 +268,13 @@
                 document.getElementById(id).classList.add('hidden');
             });
             document.getElementById(viewId).classList.remove('hidden');
+            if(viewId === 'view-home') {
+                loadLocalTripsDropdown();
+            }
         }
 
         function goHome() {
+            saveTripToLocalStorage();
             activeTrip = null;
             showView('view-home');
         }
@@ -246,6 +282,39 @@
         function getTodayDateStr() {
             const d = new Date();
             return d.toISOString().split('T')[0];
+        }
+
+        // LocalStorage สำหรับบันทึกทริปค้างไว้ทำต่อ
+        function saveTripToLocalStorage() {
+            if(!activeTrip || !activeTrip.tripName) return;
+            let savedTrips = JSON.parse(localStorage.getItem('bcc_saved_trips') || '{}');
+            savedTrips[activeTrip.tripName] = activeTrip;
+            localStorage.setItem('bcc_saved_trips', JSON.stringify(savedTrips));
+        }
+
+        function loadLocalTripsDropdown() {
+            const select = document.getElementById('select-existing-trip');
+            let savedTrips = JSON.parse(localStorage.getItem('bcc_saved_trips') || '{}');
+            let keys = Object.keys(savedTrips);
+            if(keys.length === 0) {
+                select.innerHTML = '<option value="">-- ยังไม่มี Trip ที่บันทึกไว้ในเครื่อง --</option>';
+                return;
+            }
+            select.innerHTML = '<option value="">-- เลือก Trip เดิมเพื่อทำต่อ --</option>' + keys.map(k => `<option value="${k}">Trip: ${k} (${savedTrips[k].truck})</option>`).join('');
+        }
+
+        function resumeTrip() {
+            const tripName = document.getElementById('select-existing-trip').value;
+            if(!tripName) {
+                alert('กรุณาเลือก Trip ที่ต้องการทำต่อ');
+                return;
+            }
+            let savedTrips = JSON.parse(localStorage.getItem('bcc_saved_trips') || '{}');
+            if(savedTrips[tripName]) {
+                activeTrip = savedTrips[tripName];
+                renderCheckpointsList();
+                showView('view-step2');
+            }
         }
 
         function goToStep1() {
@@ -286,26 +355,24 @@
             activeTrip.startWeight = weight;
             activeTrip.startSku = sku;
 
-            openCheckpointForm();
+            saveTripToLocalStorage();
+            resetCheckpointForm();
+            renderCheckpointsList();
+            showView('view-step2');
         }
 
-        function openCheckpointForm() {
-            const nextIdx = activeTrip.checkpoints.length + 1;
-            if(nextIdx > 21) {
-                alert('บันทึกครบ 21 จุดสูงสุดแล้ว กรุณากลับถึง BCC เพื่อจบทริป');
-                goToStep3();
-                return;
-            }
-            document.getElementById('cp-header-title').innerText = `2. จุดที่ ${nextIdx} (จาก 21 จุด)`;
+        function resetCheckpointForm() {
+            document.getElementById('edit-cp-index').value = "-1";
             document.getElementById('cp-date').value = getTodayDateStr();
             document.getElementById('cp-customer').value = '';
             document.getElementById('cp-province').selectedIndex = 0;
             document.getElementById('cp-mile').value = '';
             document.getElementById('cp-oil').value = '';
-            showView('view-step2');
+            document.getElementById('btn-save-cp').innerText = "💾 บันทึกจุดนี้ (ลงเครื่องชั่วคราว)";
         }
 
-        function saveCheckpoint(isLast) {
+        function saveCurrentCheckpoint() {
+            const editIdx = parseInt(document.getElementById('edit-cp-index').value);
             const date = document.getElementById('cp-date').value;
             const customer = document.getElementById('cp-customer').value.trim();
             const province = document.getElementById('cp-province').value;
@@ -317,11 +384,65 @@
                 return;
             }
 
-            activeTrip.checkpoints.push({
-                date, customer, province, mile, oil: oil || 0
-            });
+            const cpData = { date, customer, province, mile, oil: oil || 0 };
 
-            openCheckpointForm();
+            if(editIdx >= 0) {
+                // แก้ไขจุดเดิม
+                activeTrip.checkpoints[editIdx] = cpData;
+                alert('อัปเดตข้อมูลจุดสำเร็จ!');
+            } else {
+                // เพิ่มจุดใหม่
+                if(activeTrip.checkpoints.length >= 21) {
+                    alert('บันทึกครบ 21 จุดสูงสุดแล้ว');
+                    return;
+                }
+                activeTrip.checkpoints.push(cpData);
+                alert('บันทึกจุดใหม่สำเร็จ!');
+            }
+
+            saveTripToLocalStorage();
+            resetCheckpointForm();
+            renderCheckpointsList();
+        }
+
+        function renderCheckpointsList() {
+            const container = document.getElementById('checkpoints-list-container');
+            const countSpan = document.getElementById('cp-total-count');
+            if(!activeTrip || !activeTrip.checkpoints) {
+                container.innerHTML = '<div class="text-xs text-slate-500 text-center py-2">ยังไม่มีจุดส่งของ</div>';
+                countSpan.innerText = '0';
+                return;
+            }
+
+            countSpan.innerText = activeTrip.checkpoints.length;
+            if(activeTrip.checkpoints.length === 0) {
+                container.innerHTML = '<div class="text-xs text-slate-500 text-center py-2">ยังไม่มีจุดส่งของ</div>';
+                return;
+            }
+
+            container.innerHTML = activeTrip.checkpoints.map((cp, idx) => `
+                <div class="bg-slate-950 p-2.5 rounded-xl border border-slate-800 flex justify-between items-center text-xs">
+                    <div>
+                        <div class="font-bold text-amber-400">จุดที่ ${idx + 1}: ${cp.customer} (${cp.province})</div>
+                        <div class="text-slate-400 text-[11px]">วันที่: ${cp.date} | ไมล์: ${cp.mile} | น้ำมัน: ${cp.oil} ลิตร</div>
+                    </div>
+                    <div class="flex gap-1">
+                        <button onclick="editCheckpoint(${idx})" class="bg-slate-800 hover:bg-slate-700 text-amber-300 p-2 rounded-lg border border-slate-700" title="แก้ไข">✏️</button>
+                        <button onclick="saveCurrentCheckpoint()" class="bg-amber-500/20 hover:bg-amber-500/30 text-amber-400 p-2 rounded-lg border border-amber-500/30" title="บันทึกทับ">💾</button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function editCheckpoint(idx) {
+            const cp = activeTrip.checkpoints[idx];
+            document.getElementById('edit-cp-index').value = idx;
+            document.getElementById('cp-date').value = cp.date;
+            document.getElementById('cp-customer').value = cp.customer;
+            document.getElementById('cp-province').value = cp.province;
+            document.getElementById('cp-mile').value = cp.mile;
+            document.getElementById('cp-oil').value = cp.oil;
+            document.getElementById('btn-save-cp').innerText = `💾 บันทึกอัปเดตจุดที่ ${idx + 1}`;
         }
 
         function goToStep3() {
@@ -344,7 +465,7 @@
             activeTrip.checkpointCount = activeTrip.checkpoints.length;
 
             const btn = event.target;
-            btn.innerText = "กำลังส่งข้อมูล...";
+            btn.innerText = "กำลังส่งข้อมูลเข้า Cloud...";
             btn.disabled = true;
 
             fetch(WEB_APP_URL, {
@@ -353,13 +474,21 @@
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(activeTrip)
             }).finally(() => {
-                alert('บันทึกและส่งข้อมูลเข้า Google Sheets สำเร็จ!');
+                // ลบออกจากความจำเครื่องเมื่อส่งสำเร็จ
+                let savedTrips = JSON.parse(localStorage.getItem('bcc_saved_trips') || '{}');
+                if(activeTrip.tripName && savedTrips[activeTrip.tripName]) {
+                    delete savedTrips[activeTrip.tripName];
+                    localStorage.setItem('bcc_saved_trips', JSON.stringify(savedTrips));
+                }
+
+                alert('ส่งข้อมูลครั้งสุดท้ายเข้า Google Sheets สำเร็จ!');
                 goHome();
             });
         }
 
         initProvinces();
         renderTruckSelect();
+        loadLocalTripsDropdown();
     </script>
 </body>
 </html>
