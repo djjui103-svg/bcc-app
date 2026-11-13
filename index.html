@@ -5,15 +5,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ระบบบันทึกไมล์และน้ำมันรถขนส่ง - BCC Logistics</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
         body { font-family: 'Sarabun', sans-serif; }
     </style>
 </head>
-<body class="bg-slate-950 text-slate-100 min-h-screen p-4">
-    <div class="max-w-md mx-auto space-y-4">
-        
+<body class="bg-slate-950 text-slate-100 min-h-screen p-3">
+    <div class="w-full max-w-lg mx-auto space-y-4">
+
         <!-- Header หลัก -->
         <div class="bg-slate-900 p-4 rounded-2xl border border-slate-800 shadow-xl text-center space-y-1">
             <h1 class="text-base font-bold text-amber-400">BCC LOGISTICS</h1>
@@ -25,11 +24,11 @@
             <div class="bg-slate-900 p-4 rounded-2xl border border-slate-800 space-y-3 shadow-lg">
                 <div class="flex justify-between items-center">
                     <label class="block text-xs font-medium text-slate-300">เลือกทะเบียนรถที่ท่านขับ:</label>
-                    <button id="btn-add-truck" onclick="toggleAddTruckModal()" class="text-[11px] bg-amber-500/20 text-amber-400 border border-amber-500/30 px-2.5 py-1 rounded-lg font-medium hover:bg-amber-500/30 transition">
+                    <button onclick="toggleAddTruckModal()" class="text-[11px] bg-amber-500/20 text-amber-400 border border-amber-500/30 px-2.5 py-1 rounded-lg font-medium hover:bg-amber-500/30 transition">
                         + เพิ่มรถใหม่ (สูงสุด 5 คัน)
                     </button>
                 </div>
-                
+
                 <select id="select-truck" onchange="updateTruckCard()" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 text-sm text-white focus:outline-none focus:border-amber-500"></select>
 
                 <div id="add-truck-box" class="hidden bg-slate-950 p-3 rounded-xl border border-amber-500/40 space-y-2">
@@ -37,24 +36,24 @@
                         <span>เพิ่มทะเบียนรถ / คนขับใหม่</span>
                         <span id="extra-count" class="text-slate-400 text-[10px]">เพิ่มไปแล้ว 0/5 คัน</span>
                     </div>
-                    <input type="text" id="new-plate" placeholder="เลขทะเบียน (เช่น 73-xxxx)" class="w-full bg-slate-900 border border-slate-800 rounded-lg p-2 text-xs text-white">
-                    <input type="text" id="new-driver" placeholder="ชื่อ-นามสกุลคนขับ" class="w-full bg-slate-900 border border-slate-800 rounded-lg p-2 text-xs text-white">
-                    <input type="number" id="new-startmile" placeholder="เลขไมล์เริ่มต้นปัจจุบัน (กม.)" class="w-full bg-slate-900 border border-slate-800 rounded-lg p-2 text-xs text-white" oninput="removeLeadingZero(this)">
+                    <input type="text" id="new-plate" placeholder="เลขทะเบียน (เช่น 73-xxxx)" class="w-full bg-slate-900 border border-slate-800 rounded-lg p-2 text-sm text-white">
+                    <input type="text" id="new-driver" placeholder="ชื่อ-นามสกุลคนขับ" class="w-full bg-slate-900 border border-slate-800 rounded-lg p-2 text-sm text-white">
+                    <input type="number" id="new-startmile" placeholder="เลขไมล์เริ่มต้นปัจจุบัน (กม.)" class="w-full bg-slate-900 border border-slate-800 rounded-lg p-2 text-sm text-white" oninput="removeLeadingZero(this)">
                     <div class="flex gap-2 pt-1">
-                        <button onclick="saveNewTruck()" class="flex-1 bg-amber-500 text-slate-950 font-bold py-1.5 rounded-lg text-xs">บันทึกรถคันนี้</button>
-                        <button onclick="toggleAddTruckModal()" class="bg-slate-800 text-slate-300 px-3 py-1.5 rounded-lg text-xs">ยกเลิก</button>
+                        <button onclick="saveNewTruck()" class="flex-1 bg-amber-500 text-slate-950 font-bold py-2 rounded-lg text-sm">บันทึกรถคันนี้</button>
+                        <button onclick="toggleAddTruckModal()" class="bg-slate-800 text-slate-300 px-3 py-2 rounded-lg text-sm">ยกเลิก</button>
                     </div>
                 </div>
 
                 <div class="bg-slate-950 p-5 rounded-2xl border border-slate-800 text-center space-y-3 shadow-inner">
                     <div>
-                        <span class="bg-rose-950 text-rose-400 border border-rose-800 text-[10px] px-2.5 py-0.5 rounded-full font-semibold">BCC RAYONG</span>
+                        <span class="bg-rose-950 text-rose-400 border border-rose-800 text-[11px] px-2.5 py-0.5 rounded-full font-semibold">BCC RAYONG</span>
                     </div>
-                    <div class="bg-slate-900/80 p-3 rounded-xl border border-slate-800/80 text-xs space-y-1">
-                        <div class="text-slate-100 font-bold text-sm" id="card-truck-title">รถทะเบียน -</div>
+                    <div class="bg-slate-900/80 p-3 rounded-xl border border-slate-800/80 text-sm space-y-1">
+                        <div class="text-slate-100 font-bold" id="card-truck-title">รถทะเบียน -</div>
                         <div class="text-slate-400">สถานะ: <span class="text-emerald-400 font-medium">พร้อมส่งข้อมูลเข้า Cloud</span></div>
                     </div>
-                    <button onclick="goToStep1()" class="w-full bg-amber-500 hover:bg-amber-600 text-slate-950 font-bold py-3 px-4 rounded-xl text-sm transition shadow-lg">
+                    <button onclick="goToStep1()" class="w-full bg-amber-500 hover:bg-amber-600 text-slate-950 font-bold py-3 px-4 rounded-xl text-base transition shadow-lg">
                         1. เริ่มเปิดเที่ยวรถใหม่ <span id="card-driver-name" class="font-normal"></span>
                     </button>
                 </div>
@@ -63,95 +62,95 @@
 
         <!-- ================= STEP 1 ================= -->
         <div id="view-step1" class="hidden bg-slate-900 p-5 rounded-2xl border border-slate-800 space-y-4 shadow-xl">
-            <div class="flex items-center gap-2 text-amber-400 font-bold text-sm border-b border-slate-800 pb-2">
+            <div class="flex items-center gap-2 text-amber-400 font-bold text-base border-b border-slate-800 pb-2">
                 <span>1. เปิดเที่ยวรถขนส่งใหม่ (Start Trip)</span>
             </div>
             <div>
-                <label class="block text-xs text-slate-400 mb-1">ชื่อเที่ยวขนส่ง (เช่น GBH-ภาคใต้)</label>
-                <input type="text" id="trip-name" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 text-sm text-white focus:outline-none focus:border-amber-500" placeholder="ระบุชื่อเที่ยวขนส่ง">
+                <label class="block text-sm text-slate-400 mb-1">ชื่อเที่ยวขนส่ง (เช่น GBH-ภาคใต้)</label>
+                <input type="text" id="trip-name" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 text-base text-white focus:outline-none focus:border-amber-500" placeholder="ระบุชื่อเที่ยวขนส่ง">
             </div>
             <div>
-                <label class="block text-xs text-slate-400 mb-1">วันที่</label>
-                <input type="date" id="trip-date" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 text-sm text-white focus:outline-none focus:border-amber-500">
+                <label class="block text-sm text-slate-400 mb-1">วันที่</label>
+                <input type="date" id="trip-date" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 text-base text-white focus:outline-none focus:border-amber-500">
             </div>
             <div>
-                <label class="block text-xs text-slate-400 mb-1">เลขไมล์เริ่ม BCC (กม.)</label>
-                <input type="number" id="start-mile" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 text-sm text-white focus:outline-none focus:border-amber-500" oninput="removeLeadingZero(this)">
+                <label class="block text-sm text-slate-400 mb-1">เลขไมล์เริ่ม BCC (กม.)</label>
+                <input type="number" id="start-mile" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 text-base text-white focus:outline-none focus:border-amber-500" oninput="removeLeadingZero(this)">
             </div>
             <div>
-                <label class="block text-xs text-slate-400 mb-1">เติมน้ำมันจาก BCC (ลิตร)</label>
-                <input type="number" id="start-oil" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 text-sm text-white focus:outline-none focus:border-amber-500" placeholder="เว้นว่างถ้าไม่เติม" oninput="removeLeadingZero(this)">
+                <label class="block text-sm text-slate-400 mb-1">เติมน้ำมันจาก BCC (ลิตร)</label>
+                <input type="number" id="start-oil" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 text-base text-white focus:outline-none focus:border-amber-500" placeholder="เว้นว่างถ้าไม่เติม" oninput="removeLeadingZero(this)">
             </div>
             <div>
-                <label class="block text-xs text-slate-400 mb-1">นน.สินค้า + นน.รถ (กก.)</label>
-                <input type="number" id="start-weight" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 text-sm text-white focus:outline-none focus:border-amber-500" placeholder="เช่น 45000" oninput="removeLeadingZero(this)">
+                <label class="block text-sm text-slate-400 mb-1">นน.สินค้า + นน.รถ (กก.)</label>
+                <input type="number" id="start-weight" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 text-base text-white focus:outline-none focus:border-amber-500" placeholder="เช่น 45000" oninput="removeLeadingZero(this)">
             </div>
             <div>
-                <label class="block text-xs text-slate-400 mb-1">จำนวนสินค้า (ชิ้น)</label>
-                <input type="number" id="start-sku" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 text-sm text-white focus:outline-none focus:border-amber-500" placeholder="เช่น 1500" oninput="removeLeadingZero(this)">
+                <label class="block text-sm text-slate-400 mb-1">จำนวนสินค้า (ชิ้น)</label>
+                <input type="number" id="start-sku" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 text-base text-white focus:outline-none focus:border-amber-500" placeholder="เช่น 1500" oninput="removeLeadingZero(this)">
             </div>
             <div class="flex gap-2 pt-2">
-                <button onclick="saveStep1()" class="flex-1 bg-amber-500 hover:bg-amber-600 text-slate-950 font-bold py-3 rounded-xl text-sm transition">ถัดไป: บันทึกจุดส่งของ ➔</button>
-                <button onclick="goHome()" class="bg-slate-800 hover:bg-slate-700 text-slate-300 px-4 py-3 rounded-xl text-sm transition">ยกเลิก</button>
+                <button onclick="saveStep1()" class="flex-1 bg-amber-500 hover:bg-amber-600 text-slate-950 font-bold py-3 rounded-xl text-base transition">ถัดไป: บันทึกจุดส่งของ ➔</button>
+                <button onclick="goHome()" class="bg-slate-800 hover:bg-slate-700 text-slate-300 px-4 py-3 rounded-xl text-base transition">ยกเลิก</button>
             </div>
         </div>
 
         <!-- ================= STEP 2 ================= -->
         <div id="view-step2" class="hidden bg-slate-900 p-5 rounded-2xl border border-slate-800 space-y-4 shadow-xl">
             <div class="flex justify-between items-center border-b border-slate-800 pb-2">
-                <h2 id="cp-header-title" class="text-sm font-bold text-amber-400">2. จุดที่ 1 (จาก 21 จุด)</h2>
-                <button onclick="goToStep1()" class="text-[11px] bg-slate-800 text-amber-300 px-2.5 py-1 rounded-lg border border-slate-700">✏️ แก้ไข Start Trip</button>
+                <h2 id="cp-header-title" class="text-base font-bold text-amber-400">2. จุดที่ 1 (จาก 21 จุด)</h2>
+                <button onclick="goToStep1()" class="text-xs bg-slate-800 text-amber-300 px-2.5 py-1 rounded-lg border border-slate-700">✏️ แก้ไข Start Trip</button>
             </div>
             <div>
-                <label class="block text-xs text-slate-400 mb-1">วันที่</label>
-                <input type="date" id="cp-date" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 text-sm text-white focus:outline-none focus:border-amber-500">
+                <label class="block text-sm text-slate-400 mb-1">วันที่</label>
+                <input type="date" id="cp-date" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 text-base text-white focus:outline-none focus:border-amber-500">
             </div>
             <div>
-                <label class="block text-xs text-slate-400 mb-1">ชื่อจุด / ลูกค้า</label>
-                <input type="text" id="cp-customer" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 text-sm text-white focus:outline-none focus:border-amber-500" placeholder="ระบุชื่อร้านค้า / จุดส่ง">
+                <label class="block text-sm text-slate-400 mb-1">ชื่อจุด / ลูกค้า</label>
+                <input type="text" id="cp-customer" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 text-base text-white focus:outline-none focus:border-amber-500" placeholder="ระบุชื่อร้านค้า / จุดส่ง">
             </div>
             <div>
-                <label class="block text-xs text-slate-400 mb-1">จังหวัด</label>
-                <select id="cp-province" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 text-sm text-white focus:outline-none focus:border-amber-500"></select>
+                <label class="block text-sm text-slate-400 mb-1">จังหวัด</label>
+                <select id="cp-province" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 text-base text-white focus:outline-none focus:border-amber-500"></select>
             </div>
             <div>
-                <label class="block text-xs text-slate-400 mb-1">เลขไมล์ (กม.)</label>
-                <input type="number" id="cp-mile" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 text-sm text-white focus:outline-none focus:border-amber-500" oninput="removeLeadingZero(this)">
+                <label class="block text-sm text-slate-400 mb-1">เลขไมล์ (กม.)</label>
+                <input type="number" id="cp-mile" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 text-base text-white focus:outline-none focus:border-amber-500" oninput="removeLeadingZero(this)">
             </div>
             <div>
-                <label class="block text-xs text-slate-400 mb-1">เติมน้ำมันจากข้างนอก (ลิตร)</label>
-                <input type="number" id="cp-oil" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 text-sm text-white focus:outline-none focus:border-amber-500" placeholder="เว้นว่างถ้าไม่เติม" oninput="removeLeadingZero(this)">
+                <label class="block text-sm text-slate-400 mb-1">เติมน้ำมันจากข้างนอก (ลิตร)</label>
+                <input type="number" id="cp-oil" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 text-base text-white focus:outline-none focus:border-amber-500" placeholder="เว้นว่างถ้าไม่เติม" oninput="removeLeadingZero(this)">
             </div>
             <div class="space-y-2 pt-2">
-                <button onclick="saveCheckpoint(false)" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-3 rounded-xl text-sm transition">💾 บันทึกจุดนี้ & ไปจุดถัดไป</button>
-                <button onclick="goToStep3()" class="w-full bg-rose-600 hover:bg-rose-700 text-white font-bold py-3 rounded-xl text-sm transition">🏁 จบทริป: กลับถึง BCC</button>
+                <button onclick="saveCheckpoint()" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-3 rounded-xl text-base transition">💾 บันทึกจุดนี้ & ไปจุดถัดไป</button>
+                <button onclick="goToStep3()" class="w-full bg-rose-600 hover:bg-rose-700 text-white font-bold py-3 rounded-xl text-base transition">🏁 จบทริป: กลับถึง BCC</button>
             </div>
         </div>
 
         <!-- ================= STEP 3 ================= -->
         <div id="view-step3" class="hidden bg-slate-900 p-5 rounded-2xl border border-slate-800 space-y-4 shadow-xl">
-            <div class="flex items-center gap-2 text-amber-400 font-bold text-sm border-b border-slate-800 pb-2">
+            <div class="flex items-center gap-2 text-amber-400 font-bold text-base border-b border-slate-800 pb-2">
                 <span>3. กลับถึง BCC (จบทริป)</span>
             </div>
             <div>
-                <label class="block text-xs text-slate-400 mb-1">วันที่</label>
-                <input type="date" id="bcc-date" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 text-sm text-white focus:outline-none focus:border-amber-500">
+                <label class="block text-sm text-slate-400 mb-1">วันที่</label>
+                <input type="date" id="bcc-date" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 text-base text-white focus:outline-none focus:border-amber-500">
             </div>
             <div>
-                <label class="block text-xs text-slate-400 mb-1">ชื่อจุด / ลูกค้า</label>
-                <input type="text" value="BCC." disabled class="w-full bg-slate-900/50 border border-slate-800 rounded-xl p-3 text-sm text-slate-400 cursor-not-allowed">
+                <label class="block text-sm text-slate-400 mb-1">ชื่อจุด / ลูกค้า</label>
+                <input type="text" value="BCC." disabled class="w-full bg-slate-900/50 border border-slate-800 rounded-xl p-3 text-base text-slate-400 cursor-not-allowed">
             </div>
             <div>
-                <label class="block text-xs text-slate-400 mb-1">จังหวัด</label>
-                <input type="text" value="ระยอง" disabled class="w-full bg-slate-900/50 border border-slate-800 rounded-xl p-3 text-sm text-slate-400 cursor-not-allowed">
+                <label class="block text-sm text-slate-400 mb-1">จังหวัด</label>
+                <input type="text" value="ระยอง" disabled class="w-full bg-slate-900/50 border border-slate-800 rounded-xl p-3 text-base text-slate-400 cursor-not-allowed">
             </div>
             <div>
-                <label class="block text-xs text-slate-400 mb-1">เลขไมล์สิ้นสุดที่ BCC (กม.)</label>
-                <input type="number" id="bcc-mile" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 text-sm text-white focus:outline-none focus:border-amber-500" oninput="removeLeadingZero(this)">
+                <label class="block text-sm text-slate-400 mb-1">เลขไมล์สิ้นสุดที่ BCC (กม.)</label>
+                <input type="number" id="bcc-mile" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 text-base text-white focus:outline-none focus:border-amber-500" oninput="removeLeadingZero(this)">
             </div>
             <div class="flex gap-2 pt-2">
-                <button onclick="finalizeTrip()" class="flex-1 bg-amber-500 hover:bg-amber-600 text-slate-950 font-bold py-3 rounded-xl text-sm transition">✅ ส่งข้อมูลเข้า Google Sheets กลาง</button>
-                <button onclick="showView('view-step2')" class="bg-slate-800 hover:bg-slate-700 text-slate-300 px-4 py-3 rounded-xl text-sm transition">ย้อนกลับ</button>
+                <button id="btn-finalize" onclick="finalizeTrip(this)" class="flex-1 bg-amber-500 hover:bg-amber-600 text-slate-950 font-bold py-3 rounded-xl text-base transition">✅ ส่งข้อมูลเข้า Google Sheets กลาง</button>
+                <button onclick="showView('view-step2')" class="bg-slate-800 hover:bg-slate-700 text-slate-300 px-4 py-3 rounded-xl text-base transition">ย้อนกลับ</button>
             </div>
         </div>
 
@@ -159,10 +158,29 @@
 
     <!-- ================= SCRIPT ================= -->
     <script>
+        // URL ของ Web App (ลงท้ายด้วย /exec) — ต้องตั้ง Who has access เป็น Anyone
         const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbwDn1nKRyioHqjJMBZqV7EHsTveKfNICj4NtvIIZwvncXEe5uAqyipkcONutdfVtTpikQ/exec";
 
         const provinces = [
-            "ระยอง", "กรุงเทพมหานคร", "กระบี่", "กาญจนบุรี", "กาฬสินธุ์", "กำแพงเพชร", "ขอนแก่น", "จันทบุรี", "ฉะเชิงเทรา", "ชลบุรี", "ชัยนาท", "ชัยภูมิ", "ชุมพร", "ตรัง", "ตราด", "ตาก", "นครนายก", "นครปฐม", "นครพนม", "นครราชสีมา", "นครศรีธรรมราช", "นครสวรรค์", "นนทบุรี", "นราธิวาส", "น่าน", "บึงกาฬ", "บุรีรัมย์", "ปทุมธานี", "ประจวบคีรีขันธ์", "ปราจีนบุรี", "ปัตตานี", "พะเยา", "พังงา", "พัทลุง", "พิจิตร", "พิษณุโลก", "เพชรบูรณ์", "ภูเก็ต", "มหาสารคาม", "มุกดาหาร", "ยะลา", "ยโสธร", "ร้อยเอ็ด", "ระนอง", "ราชบุรี", "ลพบุรี", "ลำปาง", "ลำพูน", "เลย", "ศรีสะเกษ", "สกลนคร", "สงขลา", "สตูล", "สมุทรปราการ", "สมุทรสงคราม", "สมุทรสาคร", "สระแก้ว", "สระบุรี", "สิงห์บุรี", "สุโขทัย", "สุพรรณบุรี", "สุราษฎร์ธานี", "สุรินทร์", "หนองคาย", "หนองบัวลำภู", "อ่างทอง", "อำนาจเจริญ", "อุดรธานี", "อุตรดิตถ์", "อุทัยธานี", "อยุธยา", "อุบลราชธานี"
+            "กระบี่", "กรุงเทพมหานคร", "กาญจนบุรี", "กาฬสินธุ์", "กำแพงเพชร",
+            "ขอนแก่น",
+            "จันทบุรี",
+            "ฉะเชิงเทรา",
+            "ชลบุรี", "ชัยนาท", "ชัยภูมิ", "ชุมพร", "เชียงราย", "เชียงใหม่",
+            "ตรัง", "ตราด", "ตาก",
+            "นครนายก", "นครปฐม", "นครพนม", "นครราชสีมา", "นครศรีธรรมราช", "นครสวรรค์", "นนทบุรี", "นราธิวาส", "น่าน",
+            "บึงกาฬ", "บุรีรัมย์",
+            "ปทุมธานี", "ประจวบคีรีขันธ์", "ปราจีนบุรี", "ปัตตานี",
+            "เพชรบุรี", "เพชรบูรณ์", "แพร่", "พะเยา", "พังงา", "พัทลุง", "พิจิตร", "พิษณุโลก",
+            "ภูเก็ต",
+            "มหาสารคาม", "แม่ฮ่องสอน", "มุกดาหาร",
+            "ยโสธร", "ยะลา",
+            "ร้อยเอ็ด", "ระนอง", "ระยอง", "ราชบุรี",
+            "ลพบุรี", "เลย", "ลำปาง", "ลำพูน",
+            "ศรีสะเกษ",
+            "สกลนคร", "สงขลา", "สตูล", "สมุทรปราการ", "สมุทรสงคราม", "สมุทรสาคร", "สระแก้ว", "สระบุรี", "สิงห์บุรี", "สุโขทัย", "สุพรรณบุรี", "สุราษฎร์ธานี", "สุรินทร์",
+            "หนองคาย", "หนองบัวลำภู",
+            "อยุธยา", "อ่างทอง", "อำนาจเจริญ", "อุดรธานี", "อุตรดิตถ์", "อุทัยธานี", "อุบลราชธานี"
         ];
 
         const defaultTrucks = [
@@ -195,7 +213,7 @@
         }
 
         function toggleAddTruckModal() {
-            if(extraTrucks.length >= 5) {
+            if (extraTrucks.length >= 5) {
                 alert('คุณเพิ่มรถเสริมครบจำนวนจำกัด 5 คันแล้วครับ');
                 return;
             }
@@ -206,7 +224,7 @@
             const plate = document.getElementById('new-plate').value.trim();
             const driver = document.getElementById('new-driver').value.trim();
             const mile = document.getElementById('new-startmile').value.trim();
-            if(!plate || !driver || !mile) {
+            if (!plate || !driver || !mile) {
                 alert('กรุณากรอกข้อมูลให้ครบถ้วน');
                 return;
             }
@@ -219,7 +237,7 @@
 
         function updateTruckCard() {
             const select = document.getElementById('select-truck');
-            if(select.options.length === 0) return;
+            if (select.options.length === 0) return;
             const opt = select.options[select.selectedIndex];
             document.getElementById('card-truck-title').innerText = `รถทะเบียน ${opt.value}`;
             document.getElementById('card-driver-name').innerText = `(${opt.value.split(' - ')[1]})`;
@@ -245,13 +263,14 @@
 
         function getTodayDateStr() {
             const d = new Date();
-            return d.toISOString().split('T')[0];
+            const local = new Date(d.getTime() - d.getTimezoneOffset() * 60000);
+            return local.toISOString().split('T')[0];
         }
 
         function goToStep1() {
             const select = document.getElementById('select-truck');
             const defaultMile = select.options[select.selectedIndex].getAttribute('data-mile');
-            
+
             document.getElementById('trip-name').value = '';
             document.getElementById('trip-date').value = getTodayDateStr();
             document.getElementById('start-mile').value = defaultMile;
@@ -260,7 +279,7 @@
             document.getElementById('start-sku').value = '';
 
             activeTrip = {
-                truck: select.value,
+                truck: select.value.split(' - ')[0],
                 checkpoints: []
             };
             showView('view-step1');
@@ -274,7 +293,7 @@
             const weight = document.getElementById('start-weight').value;
             const sku = document.getElementById('start-sku').value;
 
-            if(!tripName || !date || !mile || !weight || !sku) {
+            if (!tripName || !date || !mile || !weight || !sku) {
                 alert('กรุณากรอกข้อมูลช่องสำคัญให้ครบถ้วน');
                 return;
             }
@@ -291,7 +310,7 @@
 
         function openCheckpointForm() {
             const nextIdx = activeTrip.checkpoints.length + 1;
-            if(nextIdx > 21) {
+            if (nextIdx > 21) {
                 alert('บันทึกครบ 21 จุดสูงสุดแล้ว กรุณากลับถึง BCC เพื่อจบทริป');
                 goToStep3();
                 return;
@@ -299,20 +318,20 @@
             document.getElementById('cp-header-title').innerText = `2. จุดที่ ${nextIdx} (จาก 21 จุด)`;
             document.getElementById('cp-date').value = getTodayDateStr();
             document.getElementById('cp-customer').value = '';
-            document.getElementById('cp-province').selectedIndex = 0;
+            document.getElementById('cp-province').value = 'ระยอง';
             document.getElementById('cp-mile').value = '';
             document.getElementById('cp-oil').value = '';
             showView('view-step2');
         }
 
-        function saveCheckpoint(isLast) {
+        function saveCheckpoint() {
             const date = document.getElementById('cp-date').value;
             const customer = document.getElementById('cp-customer').value.trim();
             const province = document.getElementById('cp-province').value;
             const mile = document.getElementById('cp-mile').value;
             const oil = document.getElementById('cp-oil').value;
 
-            if(!customer || !mile || !date) {
+            if (!customer || !mile || !date) {
                 alert('กรุณากรอกวันที่ ชื่อจุด และเลขไมล์ให้ครบถ้วน');
                 return;
             }
@@ -330,11 +349,11 @@
             showView('view-step3');
         }
 
-        function finalizeTrip() {
+        async function finalizeTrip(btn) {
             const date = document.getElementById('bcc-date').value;
             const mile = document.getElementById('bcc-mile').value;
 
-            if(!date || !mile) {
+            if (!date || !mile) {
                 alert('กรุณากรอกวันที่และเลขไมล์สิ้นสุดที่ BCC');
                 return;
             }
@@ -342,20 +361,34 @@
             activeTrip.bccReturnDate = date;
             activeTrip.bccReturnMile = mile;
             activeTrip.checkpointCount = activeTrip.checkpoints.length;
+            activeTrip.checkpoints = activeTrip.checkpoints.map(cp => ({ ...cp, truck: activeTrip.truck }));
 
-            const btn = event.target;
+            const originalText = btn.innerText;
             btn.innerText = "กำลังส่งข้อมูล...";
             btn.disabled = true;
 
-            fetch(WEB_APP_URL, {
-                method: "POST",
-                mode: "no-cors",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify(activeTrip)
-            }).finally(() => {
-                alert('บันทึกและส่งข้อมูลเข้า Google Sheets สำเร็จ!');
-                goHome();
-            });
+            try {
+                // ใช้ text/plain เพื่อหลีกเลี่ยง CORS preflight กับ Apps Script
+                const res = await fetch(WEB_APP_URL, {
+                    method: "POST",
+                    headers: { "Content-Type": "text/plain;charset=utf-8" },
+                    body: JSON.stringify({ action: "submitFinalTrip", data: activeTrip })
+                });
+                const result = await res.json();
+
+                if (result && result.status === 'success') {
+                    alert('บันทึกและส่งข้อมูลเข้า Google Sheets สำเร็จ!');
+                    goHome();
+                } else {
+                    alert('บันทึกไม่สำเร็จ: ' + JSON.stringify(result));
+                }
+            } catch (err) {
+                // ถ้าอ่านผลลัพธ์ไม่ได้ ข้อมูลอาจส่งไปแล้ว ให้ตรวจในชีตก่อนส่งซ้ำ
+                alert('ส่งข้อมูลไม่สำเร็จหรือไม่ได้รับการยืนยัน กรุณาตรวจในชีตก่อนส่งซ้ำ\n' + (err && err.message ? err.message : err));
+            } finally {
+                btn.innerText = originalText;
+                btn.disabled = false;
+            }
         }
 
         initProvinces();
